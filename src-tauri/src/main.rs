@@ -6,41 +6,37 @@ mod config;
 
 use lazy_static::lazy_static;
 use std::sync::Mutex;
-use crate::nodes::Response;
+use crate::nodes::{Node, Response};
 
 fn main() {
   tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![process_answer])
+      .invoke_handler(tauri::generate_handler![process_answer, reset_node])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");
 }
 
 lazy_static! {
-     static ref CURRENT: Mutex<nodes::Node> = Mutex::new(config::get_decision_tree());
+    static ref CURRENT: Mutex<Option<Node>> = Mutex::new(Some(config::get_decision_tree()));
 }
 
 #[tauri::command]
-fn process_answer(answer: &str) -> nodes::Response {
+fn reset_node() {
+  let mut current = CURRENT.lock().unwrap();
+  *current = Some(config::get_decision_tree());
+}
+
+#[tauri::command]
+fn process_answer(answer: &str) -> Response {
   let mut current = CURRENT.lock().unwrap();
 
-  match answer {
-    "yes" => {
-      if current.yes_node.is_some() {
-        current.go_yes()
-      } else {
-        current.return_response()
-      }
+  if let Some(ref mut current_node) = *current {
+    match answer {
+      "yes" => current_node.go_yes(),
+      "no" => current_node.go_no(),
+      "start" =>  current_node.return_response(),
+      _ => Response::default(),
     }
-    "no" => {
-      if current.no_node.is_some() {
-        current.go_no()
-      } else {
-        current.return_response()
-      }
-    }
-    "start" => {
-      current.return_response()
-    }
-    _ => Response::default(),
+  } else {
+    Response::default()
   }
 }
