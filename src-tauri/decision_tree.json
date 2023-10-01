@@ -1,0 +1,27 @@
+{
+  "question": "Do you have a fever?",
+  "yes_node": {
+    "question": "Are you coughing?",
+    "yes_node": {
+      "decision": "You have a common cold."
+    },
+    "no_node": {
+      "question": "Do you have a sore throat?",
+      "yes_node": {
+        "decision": "You have streptococcal infection (Strep throat)."
+      },
+      "no_node": {
+        "decision": "You have influenza (Flu)."
+      }
+    }
+  },
+  "no_node": {
+    "question": "Do you have abdominal pain?",
+    "yes_node": {
+      "decision": "You may have appendicitis. Please seek immediate medical attention."
+    },
+    "no_node": {
+      "decision": "You're healthy!"
+    }
+  }
+}
