@@ -33,6 +33,8 @@ fn process_answer(answer: &str) -> Response {
     match answer {
       "yes" => current_node.go_yes(),
       "no" => current_node.go_no(),
+      "maybe_yes" => current_node.go_maybe_yes(),
+      "maybe_no" => current_node.go_maybe_no(),
       "start" =>  current_node.return_response(),
       _ => Response::default(),
     }

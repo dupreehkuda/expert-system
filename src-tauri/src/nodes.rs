@@ -12,6 +12,8 @@ pub struct Node {
     decision: Option<String>,
     pub yes_node: Option<Box<Node>>,
     pub no_node: Option<Box<Node>>,
+    pub maybe_yes_node: Option<Box<Node>>,
+    pub maybe_no_node: Option<Box<Node>>,
 }
 
 impl Node {
@@ -26,6 +28,22 @@ impl Node {
     pub fn go_no(&mut self) -> Response {
         if let Some(no_node) = self.no_node.take() {
             *self = *no_node;
+        }
+
+        self.return_response()
+    }
+
+    pub fn go_maybe_yes(&mut self) -> Response {
+        if let Some(maybe_yes_node) = self.maybe_yes_node.take() {
+            *self = *maybe_yes_node;
+        }
+
+        self.return_response()
+    }
+
+    pub fn go_maybe_no(&mut self) -> Response {
+        if let Some(maybe_no_node) = self.maybe_no_node.take() {
+            *self = *maybe_no_node;
         }
 
         self.return_response()

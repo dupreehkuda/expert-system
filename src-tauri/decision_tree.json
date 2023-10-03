@@ -1,27 +1,51 @@
 {
-  "question": "Do you have a fever?",
+  "question": "Вопрос один",
   "yes_node": {
-    "question": "Are you coughing?",
+    "question": "Вопрос два",
     "yes_node": {
-      "decision": "You have a common cold."
+      "decision": "Итог 1"
     },
     "no_node": {
-      "question": "Do you have a sore throat?",
+      "question": "Вопрос четыре",
       "yes_node": {
-        "decision": "You have streptococcal infection (Strep throat)."
+        "decision": "Итог 2"
       },
       "no_node": {
-        "decision": "You have influenza (Flu)."
+        "decision": "Итог 3"
+      },
+      "maybe_yes_node": {
+        "decision": "Какой-то итог"
+      },
+      "maybe_no_node": {
+        "decision": "Какой-то итог"
       }
+    },
+    "maybe_yes_node": {
+      "decision": "Какой-то итог"
+    },
+    "maybe_no_node": {
+      "decision": "Какой-то итог"
     }
   },
   "no_node": {
-    "question": "Do you have abdominal pain?",
+    "question": "Вопрос три",
     "yes_node": {
-      "decision": "You may have appendicitis. Please seek immediate medical attention."
+      "decision": "Итог 4"
     },
     "no_node": {
-      "decision": "You're healthy!"
+      "decision": "Итог 5"
+    },
+    "maybe_yes_node": {
+      "decision": "Какой-то итог"
+    },
+    "maybe_no_node": {
+      "decision": "Какой-то итог"
     }
+  },
+  "maybe_yes_node": {
+    "decision": "Какой-то итог"
+  },
+  "maybe_no_node": {
+    "decision": "Какой-то итог"
   }
 }

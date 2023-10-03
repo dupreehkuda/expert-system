@@ -5,9 +5,37 @@
     $: decision = ''
     $: started = false
     $: finished = false
+    $: questions = []
+    $: answers = []
+
+    async function addToLog(answer) {
+        let ansTranslate = ''
+
+        switch (answer) {
+            case "yes":
+                ansTranslate = "Да"
+                break;
+            case "no":
+                ansTranslate = "Нет"
+                break;
+            case "maybe_yes":
+                ansTranslate = "Скорее да"
+                break;
+            case "maybe_no":
+                ansTranslate = "Скорее нет"
+                break;
+            default:
+                return
+        }
+
+        questions = [...questions, question]
+        answers = [...answers, ansTranslate]
+    }
 
     async function process(answer) {
         if (answer === "start") { started = true }
+
+        await addToLog(answer)
 
         let response = await invoke("process_answer", { answer })
 
@@ -18,6 +46,11 @@
     }
 
     async function restart() {
+        question = ''
+        decision = ''
+        questions = []
+        answers = []
+
         await invoke("reset_node")
         await process("start")
     }
@@ -29,13 +62,24 @@
 
     <div class="flex py-2">
         {#if !started && !finished}
-            <button class="btn mr-2" on:click={async () => process("start")}>start</button>
+            <button class="btn mr-2" on:click={async () => process("start")}>Начать</button>
         {:else if started && finished}
-            <button class="btn mr-2" on:click={async () => restart()}>restart</button>
+            <button class="btn mr-2" on:click={async () => restart()}>В начало</button>
         {:else}
-            <button class="btn mr-2" on:click={async () => process("yes")}>yes</button>
-            <button class="btn" on:click={async () => process("no")}>no</button>
+            <button class="btn mr-2" on:click={async () => process("yes")}>Да</button>
+            <button class="btn mr-2" on:click={async () => process("no")}>Нет</button>
+            <button class="btn mr-2" on:click={async () => process("maybe_yes")}>Скорее да</button>
+            <button class="btn mr-2" on:click={async () => process("maybe_no")}>Скорее нет</button>
         {/if}
+    </div>
+    <div class="flex py-2">
+        <ol>
+            {#each questions as question, i}
+                <li>
+                    <h6>{question} -> {answers[i]}</h6>
+                </li>
+            {/each}
+        </ol>
     </div>
 </div>
 
