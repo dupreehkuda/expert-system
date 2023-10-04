@@ -5,31 +5,15 @@
     $: decision = ''
     $: started = false
     $: finished = false
-    $: questions = []
-    $: answers = []
+    $: possibleAnswers = []
+    $: logQuestions = []
+    $: logAnswers = []
 
     async function addToLog(answer) {
-        let ansTranslate = ''
+        if (answer === "start") { return }
 
-        switch (answer) {
-            case "yes":
-                ansTranslate = "Да"
-                break;
-            case "no":
-                ansTranslate = "Нет"
-                break;
-            case "maybe_yes":
-                ansTranslate = "Скорее да"
-                break;
-            case "maybe_no":
-                ansTranslate = "Скорее нет"
-                break;
-            default:
-                return
-        }
-
-        questions = [...questions, question]
-        answers = [...answers, ansTranslate]
+        logQuestions = [...logQuestions, question]
+        logAnswers = [...logAnswers, answer]
     }
 
     async function process(answer) {
@@ -41,6 +25,7 @@
 
         question = response.question
         decision = response.decision
+        possibleAnswers = response.answers
 
         if (decision !== "") { finished = true } else { finished = false }
     }
@@ -48,8 +33,9 @@
     async function restart() {
         question = ''
         decision = ''
-        questions = []
-        answers = []
+        logQuestions = []
+        logAnswers = []
+        possibleAnswers = []
 
         await invoke("reset_node")
         await process("start")
@@ -66,26 +52,23 @@
         {:else if started && finished}
             <button class="btn mr-2" on:click={async () => restart()}>В начало</button>
         {:else}
-            <button class="btn mr-2" on:click={async () => process("yes")}>Да</button>
-            <button class="btn mr-2" on:click={async () => process("no")}>Нет</button>
-            <button class="btn mr-2" on:click={async () => process("maybe_yes")}>Скорее да</button>
-            <button class="btn mr-2" on:click={async () => process("maybe_no")}>Скорее нет</button>
+            {#each possibleAnswers as ans}
+                <button class="btn mr-2" on:click={async () => process(ans)}>{ans}</button>
+            {/each}
         {/if}
     </div>
     <div class="flex py-2">
         <ol>
-            {#each questions as question, i}
-                <li>
-                    <h6>{question} -> {answers[i]}</h6>
-                </li>
+            {#each logQuestions as question, i}
+                <li><h6>{question} -> <span class="answer">{logAnswers[i]}</span></h6></li>
             {/each}
         </ol>
     </div>
 </div>
 
-
-<style lang="postcss">
-    :global(html) {
-        background-color: #202020;
+<style>
+    .answer {
+        font-style: italic;
+        color: dodgerblue;
     }
 </style>

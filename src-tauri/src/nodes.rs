@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct Response {
     question: String,
     decision: String,
+    answers: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -12,8 +13,8 @@ pub struct Node {
     decision: Option<String>,
     pub yes_node: Option<Box<Node>>,
     pub no_node: Option<Box<Node>>,
-    pub maybe_yes_node: Option<Box<Node>>,
-    pub maybe_no_node: Option<Box<Node>>,
+    pub likely_yes_node: Option<Box<Node>>,
+    pub likely_no_node: Option<Box<Node>>,
 }
 
 impl Node {
@@ -33,26 +34,45 @@ impl Node {
         self.return_response()
     }
 
-    pub fn go_maybe_yes(&mut self) -> Response {
-        if let Some(maybe_yes_node) = self.maybe_yes_node.take() {
-            *self = *maybe_yes_node;
+    pub fn go_likely_yes(&mut self) -> Response {
+        if let Some(likely_yes_node) = self.likely_yes_node.take() {
+            *self = *likely_yes_node;
         }
 
         self.return_response()
     }
 
-    pub fn go_maybe_no(&mut self) -> Response {
-        if let Some(maybe_no_node) = self.maybe_no_node.take() {
-            *self = *maybe_no_node;
+    pub fn go_likely_no(&mut self) -> Response {
+        if let Some(likely_no_node) = self.likely_no_node.take() {
+            *self = *likely_no_node;
         }
 
         self.return_response()
     }
 
     pub fn return_response(&self) -> Response {
+        let mut result: Vec<String> = Vec::new();
+
+        if self.yes_node.is_some() {
+            result.push("Да".to_string())
+        }
+
+        if self.no_node.is_some() {
+            result.push("Нет".to_string())
+        }
+
+        if self.likely_yes_node.is_some() {
+            result.push("Скорее да".to_string())
+        }
+
+        if self.likely_no_node.is_some() {
+            result.push("Скорее нет".to_string())
+        }
+
         Response {
             decision: self.decision.clone().unwrap_or("".to_string()),
-            question: self.question.clone().unwrap_or("".to_string())
+            question: self.question.clone().unwrap_or("".to_string()),
+            answers: result,
         }
     }
 }

@@ -31,10 +31,10 @@ fn process_answer(answer: &str) -> Response {
 
   if let Some(ref mut current_node) = *current {
     match answer {
-      "yes" => current_node.go_yes(),
-      "no" => current_node.go_no(),
-      "maybe_yes" => current_node.go_maybe_yes(),
-      "maybe_no" => current_node.go_maybe_no(),
+      "Да" => current_node.go_yes(),
+      "Нет" => current_node.go_no(),
+      "Скорее да" => current_node.go_likely_yes(),
+      "Скорее нет" => current_node.go_likely_no(),
       "start" =>  current_node.return_response(),
       _ => Response::default(),
     }
